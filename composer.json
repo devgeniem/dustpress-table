@@ -1,0 +1,27 @@
+{
+    "name": "devgeniem/dustpress-table",
+    "type": "wordpress-plugin",
+    "description": "DustPress Table",
+    "authors": [
+        {
+            "name": "Miika Arponen",
+            "email": "miika@geniem.com",
+            "homepage": "http://geniem.com/",
+            "role": "Developer"
+        }
+    ],
+    "keywords": [
+        "wordpress", "dustpress", "table"
+    ],
+    "license": "GPL-3.0-or-later",
+    "minimum-stability": "dev",
+    "repositories": [
+        {
+            "type": "git",
+            "url": "ssh://git@github.com/devgeniem/dustpress-table.git"
+        }
+    ],
+    "autoload": {
+        "psr-4": {"Geniem\\DustPressTable\\": "src/"}
+    }
+}
