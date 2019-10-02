@@ -1,134 +1,175 @@
-const webpack           = require( 'webpack' );
-const ExtractTextPlugin = require( 'extract-text-webpack-plugin' );
-const path              = require( 'path' ); // This resolves into the absolute path of the plugin root.
-const env               = process.env.NODE_ENV;
+const path = require( 'path' );
+const webpack = require( 'webpack' );
+const CleanWebpackPlugin = require( 'clean-webpack-plugin' );
+const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
+const TerserPlugin = require( 'terser-webpack-plugin' );
 
-// Change this if you don't want to minize the Javascript.
-const minifyJs = true;
+// Plugin root folder.
+const pluginPath = `${path.resolve( __dirname )}`;
 
-const postCss = {
-    loader: 'postcss-loader',
-    options: {
-        sourceMap: true
-    }
-};
+// Plugin paths
+const mainEntry = `${pluginPath}/assets/js/main.js`;
+const output = `${pluginPath}/assets/dist`;
 
-const cssLoader = {
-    loader: 'css-loader',
-    options: {
-        sourceMap: true,
-        minimize: true
-    }
-};
+// All loaders to use on assets.
+const allModules = {
+    rules: [
+        {
+            enforce: 'pre',
+            test: /\.js$/,
+            exclude: /node_modules/,
+            use: {
+                loader: 'eslint-loader',
+                options: {
+                    configFile: `${pluginPath}/.eslintrc.json`,
+                    fix: false,
+                    failOnWarning: false,
+                    failonError: true
+                }
+            }
+        },
+        {
+            test: /\.js$/,
+            exclude: /node_modules/,
+            use: {
+                loader: 'babel-loader',
+                options: {
 
-const sassLoader = {
-    loader: 'sass-loader',
-    options: {
-        sourceMap: true
-    }
-};
+                    // Do not use the .babelrc configuration file.
+                    babelrc: false,
 
-const config = {
-    entry: {
-        main: './assets/js/main.js'
-    },
-    output: {
-        path: path.resolve( './assets/dist' ),
-        filename: '[name].js',
-        library: 'dustpress-table',
-        libraryTarget: 'umd',
-        umdNamedDefine: true
-    },
-    externals: {
+                    // The loader will cache the results of the loader in node_modules/.cache/babel-loader.
+                    cacheDirectory: true,
 
-        // Set jQuery to be an external resource.
-        'jquery': 'jQuery'
-    },
-    plugins: [
+                    // Enable latest JavaScript features.
+                    presets: [ '@babel/preset-env' ],
 
-        // Extract all css into one file.
-        new ExtractTextPlugin( '[name].css', {
-            allChunks: true
-        }),
-
-        // Provide jQuery instance for all modules.
-        new webpack.ProvidePlugin({
-            jQuery: 'jquery'
-        })
-    ],
-    module: {
-        rules: [
-            {
-                test: /\.js$/,
-                include: [
-                    path.resolve( __dirname, 'assets/js' )
-                ],
-                use: {
-                    loader: 'babel-loader',
+                    // Enable dynamic imports.
+                    plugins: [ '@babel/plugin-syntax-dynamic-import' ]
+                }
+            }
+        },
+        {
+            test: /\.scss$/,
+            use: [
+                MiniCssExtractPlugin.loader,
+                {
+                    loader: 'css-loader',
                     options: {
-
-                        // Removes unneeded whitespace
-                        compact: true,
-
-                        // Do not use the .babelrc configuration file.
-                        babelrc: false,
-
-                        // The loader will cache the results of the loader in node_modules/.cache/babel-loader.
-                        cacheDirectory: true,
-
-                        // List enabled ECMAScript feature sets.
-                        presets: [ 'env', 'stage-0' ],
-
-                        // The 'transform-runtime' plugin tells babel to require the runtime instead of inlining it.
-                        plugins: [ 'transform-runtime' ]
+                        sourceMap: true
+                    }
+                },
+                {
+                    loader: 'sass-loader',
+                    options: {
+                        sourceMap: true
                     }
                 }
-            },
-            {
-                test: /\.css$/,
-                use: ExtractTextPlugin.extract({
-                    use: [ cssLoader, postCss ]
-                })
-            },
-            {
-                test: /\.scss$/,
-                use: ExtractTextPlugin.extract({
-                    use: [ cssLoader, postCss, sassLoader ]
-                })
-            },
-            {
-                test: /\.(woff(2)?|eot|ttf|otf)(\?[a-z0-9=\.]+)?$/,
-                use: {
-                    loader: 'url-loader?name=../fonts/[name].[ext]'
+            ]
+        },
+        {
+            test: /\.(gif|jpe?g|png|svg)(\?[a-z0-9=\.]+)?$/,
+            exclude: [ /assets\/fonts/, /assets\/icons/, /node_modules/ ],
+            use: [
+                'file-loader?name=[name].[ext]',
+                {
+                    loader: 'image-webpack-loader',
+                    options: {
+                        mozjpeg: {
+                            quality: 70
+                        },
+                        optipng: {
+                            enabled: false
+                        },
+                        pngquant: {
+                            quality: [ 0.7, 0.7 ]
+                        },
+                        gifsicle: {
+                            interlaced: false
+                        }
+                    }
                 }
-            },
-            {
-                test: /\.(svg|gif|png|jpeg|jpg)(\?[a-z0-9=\.]+)?$/,
-                use: {
-                    loader: 'url-loader?name=../images/[name].[ext]'
-                }
+            ]
+        },
+        {
+            test: /\.(eot|svg|ttf|woff(2)?)(\?[a-z0-9=\.]+)?$/,
+            exclude: [ /assets\/images/, /assets\/icons/, /node_modules/ ],
+            use: 'file-loader?name=[name].[ext]'
+        }
+    ]
+};
+
+// All optimizations to use.
+const allOptimizations = {
+    runtimeChunk: false,
+    splitChunks: {
+        cacheGroups: {
+            vendor: {
+                test: /[\\/]node_modules[\\/]/,
+                name: 'vendor',
+                chunks: 'all'
             }
-        ]
-    },
-    watchOptions: {
-        poll: 500
+        }
     }
 };
 
-// Check if minifyJs has been set true and minify.
-if ( minifyJs === true ) {
+// All plugins to use.
+const allPlugins = [
 
-    // Push minifying settings to the config.plugins object.
-    config.plugins.push(
-        new webpack.optimize.UglifyJsPlugin({
-            sourceMap: true,
-            parallel: true,
-            mangle: false,
+    // Convert JS to CSS.
+    new MiniCssExtractPlugin({
+        filename: '[name].css'
+    }),
+
+    // Provide jQuery instance for all modules.
+    new webpack.ProvidePlugin({
+        jQuery: 'jquery'
+    })
+];
+
+allOptimizations.minimizer = [
+
+    // Optimize for production build.
+    new TerserPlugin({
+        cache: true,
+        parallel: true,
+        sourceMap: true,
+        terserOptions: {
+            output: {
+                comments: false
+            },
             compress: {
-                unused: false
+                warnings: false,
+                drop_console: true // eslint-disable-line camelcase
             }
-        })
-    );
-}
+        }
+    })
+];
 
-module.exports = config;
+// Delete distribution folder for production build.
+allPlugins.push( new CleanWebpackPlugin() );
+
+module.exports = [
+    {
+        entry: {
+            main: [ mainEntry ]
+        },
+
+        output: {
+            path: output,
+            filename: '[name].js'
+        },
+
+        module: allModules,
+
+        optimization: allOptimizations,
+
+        plugins: allPlugins,
+
+        externals: {
+
+            // Set jQuery to be an external resource.
+            jquery: 'jQuery'
+        },
+    }
+];
