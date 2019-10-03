@@ -151,6 +151,8 @@ allPlugins.push( new CleanWebpackPlugin() );
 
 module.exports = [
     {
+        mode: 'development',
+
         entry: {
             main: [ mainEntry ]
         },

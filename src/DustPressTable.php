@@ -28,7 +28,16 @@ class DustPressTable {
         $this->plugin = $plugin;
 
         // Enqueue styles and scripts
-        $this->enqueues();
+        add_action( 'wp_enqueue_scripts', [ $this, 'enqueues' ], 10 );
+
+        // Require the external API functions
+        require_once( __DIR__ . '/API.php' );
+
+        // Add DustPress partials directory
+        add_filter( 'dustpress/partials', function( $partials ) {
+            $partials[] = $this->plugin->path . '/partials';
+            return $partials;
+        });
     }
 
     /**
@@ -37,7 +46,9 @@ class DustPressTable {
      * @return void
      */
     public function enqueues() {
-        \wp_enqueue_script( 'dustpress-table', $this->plugin->url .'/assets/dist/main.js', [], $this->plugin->plugin_data['Version'], true );
-        \wp_enqueue_style( 'dustpress-table', $this->plugin->url . '/assets/dist/main.css', [], $this->plugins->plugin_data['Version'] );
+        // \wp_enqueue_script( 'dustpress-table', $this->plugin->url . '/assets/dist/main.js', [], $this->plugin->plugin_data['Version'], true );
+        // \wp_enqueue_style( 'dustpress-table', $this->plugin->url . '/assets/dist/main.css', [], $this->plugin->plugin_data['Version'] );
+        \wp_enqueue_script( 'dustpress-table', $this->plugin->url . '/assets/dist/main.js', [], rand( 0, PHP_INT_MAX ), true );
+        \wp_enqueue_style( 'dustpress-table', $this->plugin->url . '/assets/dist/main.css', [], rand( 0, PHP_INT_MAX ) );
     }
 }
