@@ -1,0 +1,15 @@
+{^config}
+    <p>"Config" is a mandatory parameter for the dpt-table partial.</p>
+{:else}
+    <div class="dpt-table" id="dpt-table-{config.id}" data-endpoint="{config.data}">
+        <table>
+            <thead>
+                <tr>
+                    <td>Loading content...</td>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+{/config}
