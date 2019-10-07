@@ -48,6 +48,7 @@ class DustPressTable {
     public function enqueues() {
         \wp_enqueue_script( 'dustjs', $this->plugin->url . '/assets/vendor/dust-full.min.js', [], '2.7.5', true );
 
+        // PHP_INT_MAX there only for development purposes, it will be changed to the plugin version number when done.
         \wp_register_script( 'dustpress-table', $this->plugin->url . '/assets/dist/main.js', [ 'wp-i18n' ], rand( 0, PHP_INT_MAX ), true );
         \wp_set_script_translations( 'dustpress-table', 'dustpress' );
         \wp_enqueue_script( 'dustpress-table' );
