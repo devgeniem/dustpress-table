@@ -95,6 +95,15 @@ const allModules = {
             test: /\.(eot|svg|ttf|woff(2)?)(\?[a-z0-9=\.]+)?$/,
             exclude: [ /assets\/images/, /assets\/icons/, /node_modules/ ],
             use: 'file-loader?name=[name].[ext]'
+        },
+        {
+            test: /\.dust$/,
+            use: {
+                loader: 'dust-loader',
+                options: {
+                    rootDir: 'partials'
+                }
+            }
         }
     ]
 };
@@ -121,7 +130,7 @@ const allPlugins = [
         filename: '[name].css'
     }),
 
-    // Provide jQuery instance for all modules.
+    // Provide jQuery and Dust.js instances to all modules.
     new webpack.ProvidePlugin({
         jQuery: 'jquery'
     })
@@ -172,6 +181,6 @@ module.exports = [
 
             // Set jQuery to be an external resource.
             jquery: 'jQuery'
-        },
+        }
     }
 ];

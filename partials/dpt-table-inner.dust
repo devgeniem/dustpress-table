@@ -1,0 +1,25 @@
+<table>
+    <thead>
+        <tr>
+            {#columns}
+                <th data-key="{key}">{value}</th>
+            {/columns}
+        </tr>
+    </thead>
+    <tbody>
+        {#data}
+            <tr>
+                {#.}
+                    <td>{.}</td>
+                {/.}
+            </tr>
+        {/data}
+    </tbody>
+</table>
+{#pagination}
+    {^template}
+        {>"dpt-pagination" /}
+    {:else}
+        {>"{template}" /}
+    {/template}
+{/pagination}

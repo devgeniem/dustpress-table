@@ -1,15 +1,29 @@
 {^config}
     <p>"Config" is a mandatory parameter for the dpt-table partial.</p>
 {:else}
-    <div class="dpt-table" id="dpt-table-{config.id}" data-endpoint="{config.data}">
-        <table>
-            <thead>
-                <tr>
-                    <td>Loading content...</td>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
+    <div class="dpt-table" id="dpt-table-{config.id}" data-endpoint="{config.data}" data-perpage="{config.per_page}">
+        {?config.filters}
+            <div class="dpt-table-filters" id="dpt-table-filters-{config.id}">
+                {#config.filters}
+                    <select name="{.field}">
+                        <option value="" disabled selected>{.name}</option>
+                        {#.options}
+                            <option>{.}</option>
+                        {/.options}
+                    </select>
+                {/config.filters}
+            </div>
+        {/config.filters}
+        <div class="dpt-table-data" id="dpt-table-data-{config.id}">
+            <table>
+                <thead>
+                    <tr>
+                        <td>Loading content...</td>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
     </div>
 {/config}

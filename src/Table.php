@@ -73,6 +73,14 @@ class Table {
             $this->config['search'] = false;
         }
 
+        // Handle the per page parameter
+        if ( ! empty( $this->config['per_page'] ) && ! is_int( $this->config['per_page'] ) ) {
+            $this->exception( 'per_page parameter must be an integer' );
+        }
+        else {
+            $this->config['per_page'] = 20;
+        }
+
         // Handle the type parameter
         if ( ! empty( $this->config['type'] ) && ! is_string( $this->config['type'] ) ) {
             $this->exception( 'type parameter must be a string' );

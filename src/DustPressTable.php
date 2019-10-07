@@ -46,9 +46,12 @@ class DustPressTable {
      * @return void
      */
     public function enqueues() {
-        // \wp_enqueue_script( 'dustpress-table', $this->plugin->url . '/assets/dist/main.js', [], $this->plugin->plugin_data['Version'], true );
-        // \wp_enqueue_style( 'dustpress-table', $this->plugin->url . '/assets/dist/main.css', [], $this->plugin->plugin_data['Version'] );
-        \wp_enqueue_script( 'dustpress-table', $this->plugin->url . '/assets/dist/main.js', [], rand( 0, PHP_INT_MAX ), true );
+        \wp_enqueue_script( 'dustjs', $this->plugin->url . '/assets/vendor/dust-full.min.js', [], '2.7.5', true );
+
+        \wp_register_script( 'dustpress-table', $this->plugin->url . '/assets/dist/main.js', [ 'wp-i18n' ], rand( 0, PHP_INT_MAX ), true );
+        \wp_set_script_translations( 'dustpress-table', 'dustpress' );
+        \wp_enqueue_script( 'dustpress-table' );
+
         \wp_enqueue_style( 'dustpress-table', $this->plugin->url . '/assets/dist/main.css', [], rand( 0, PHP_INT_MAX ) );
     }
 }

@@ -2,8 +2,6 @@
 import '../styles/main.scss';
 import Table from './table';
 
-require( './table.js' );
-
 const $ = window.jQuery;
 
 class DustPressTable {
