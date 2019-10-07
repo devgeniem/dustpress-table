@@ -130,7 +130,7 @@ const allPlugins = [
         filename: '[name].css'
     }),
 
-    // Provide jQuery and Dust.js instances to all modules.
+    // Provide jQuery instance for all modules.
     new webpack.ProvidePlugin({
         jQuery: 'jquery'
     })
