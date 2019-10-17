@@ -15,20 +15,6 @@ const output = `${pluginPath}/assets/dist`;
 const allModules = {
     rules: [
         {
-            enforce: 'pre',
-            test: /\.js$/,
-            exclude: /node_modules/,
-            use: {
-                loader: 'eslint-loader',
-                options: {
-                    configFile: `${pluginPath}/.eslintrc.json`,
-                    fix: false,
-                    failOnWarning: false,
-                    failonError: true
-                }
-            }
-        },
-        {
             test: /\.js$/,
             exclude: /node_modules/,
             use: {
@@ -130,9 +116,10 @@ const allPlugins = [
         filename: '[name].css'
     }),
 
-    // Provide jQuery instance for all modules.
+    // Provide jQuery and lodash instances for all modules.
     new webpack.ProvidePlugin({
-        jQuery: 'jquery'
+        jQuery: 'jquery',
+        lodash: 'lodash'
     })
 ];
 

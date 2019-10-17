@@ -29,6 +29,7 @@ class DustPressTable {
 
         // Enqueue styles and scripts
         add_action( 'wp_enqueue_scripts', [ $this, 'enqueues' ], 10 );
+        add_action( 'wp_enqueue_scripts', [ $this, 'enqueues_after' ], 20 );
 
         // Require the external API functions
         require_once( __DIR__ . '/API.php' );
@@ -46,13 +47,16 @@ class DustPressTable {
      * @return void
      */
     public function enqueues() {
-        \wp_enqueue_script( 'dustjs', $this->plugin->url . '/assets/vendor/dust-full.min.js', [], '2.7.5', true );
+        \wp_enqueue_script( 'dustjs', $this->plugin->url . 'assets/vendor/dust-full.min.js', [], '2.7.5', true );
 
         // PHP_INT_MAX there only for development purposes, it will be changed to the plugin version number when done.
-        \wp_register_script( 'dustpress-table', $this->plugin->url . '/assets/dist/main.js', [ 'wp-i18n' ], rand( 0, PHP_INT_MAX ), true );
+        \wp_register_script( 'dustpress-table', $this->plugin->url . 'assets/dist/main.js', [ 'wp-i18n' ], rand( 0, PHP_INT_MAX ), true );
         \wp_set_script_translations( 'dustpress-table', 'dustpress' );
-        \wp_enqueue_script( 'dustpress-table' );
 
-        \wp_enqueue_style( 'dustpress-table', $this->plugin->url . '/assets/dist/main.css', [], rand( 0, PHP_INT_MAX ) );
+        \wp_enqueue_style( 'dustpress-table', $this->plugin->url . 'assets/dist/main.css', [], rand( 0, PHP_INT_MAX ) );
+    }
+
+    public function enqueues_after() {
+        \wp_enqueue_script( 'dustpress-table' );
     }
 }

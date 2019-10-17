@@ -20,15 +20,15 @@ class Result {
     public function __set( string $name, $value ) : void {
         switch ( $name ) {
             case 'columns':
-                $set = [];
-                foreach ( (array) $value as $key => $value ) {
-                    $set[] = [
-                        'key'   => $key,
-                        'value' => $value,
-                    ];
-                }
+                // $set = [];
+                // foreach ( (array) $value as $key => $value ) {
+                //     $set[] = [
+                //         'key'   => $key,
+                //         'value' => $value,
+                //     ];
+                // }
 
-                $this->columns = $set;
+                $this->columns = $value;
                 break;
             case 'data':
                 $this->{$name} = $value;
