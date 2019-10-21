@@ -15,20 +15,6 @@ const output = `${pluginPath}/assets/dist`;
 const allModules = {
     rules: [
         {
-            enforce: 'pre',
-            test: /\.js$/,
-            exclude: /node_modules/,
-            use: {
-                loader: 'eslint-loader',
-                options: {
-                    configFile: `${pluginPath}/.eslintrc.json`,
-                    fix: false,
-                    failOnWarning: false,
-                    failonError: true
-                }
-            }
-        },
-        {
             test: /\.js$/,
             exclude: /node_modules/,
             use: {
@@ -95,6 +81,15 @@ const allModules = {
             test: /\.(eot|svg|ttf|woff(2)?)(\?[a-z0-9=\.]+)?$/,
             exclude: [ /assets\/images/, /assets\/icons/, /node_modules/ ],
             use: 'file-loader?name=[name].[ext]'
+        },
+        {
+            test: /\.dust$/,
+            use: {
+                loader: 'dust-loader',
+                options: {
+                    rootDir: 'partials'
+                }
+            }
         }
     ]
 };
@@ -121,9 +116,10 @@ const allPlugins = [
         filename: '[name].css'
     }),
 
-    // Provide jQuery instance for all modules.
+    // Provide jQuery and lodash instances for all modules.
     new webpack.ProvidePlugin({
-        jQuery: 'jquery'
+        jQuery: 'jquery',
+        lodash: 'lodash'
     })
 ];
 
@@ -172,6 +168,6 @@ module.exports = [
 
             // Set jQuery to be an external resource.
             jquery: 'jQuery'
-        },
+        }
     }
 ];

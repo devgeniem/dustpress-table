@@ -69,8 +69,16 @@ class Table {
         if ( ! empty( $this->config['search'] ) && ! is_bool( $this->config['search'] ) ) {
             $this->exception( 'search parameter must be a boolean' );
         }
-        else {
+        elseif ( empty( $this->config['search'] ) ) {
             $this->config['search'] = false;
+        }
+
+        // Handle the per page parameter
+        if ( ! empty( $this->config['per_page'] ) && ! is_int( $this->config['per_page'] ) ) {
+            $this->exception( 'per_page parameter must be an integer' );
+        }
+        elseif ( empty( $this->config['per_page'] ) ) {
+            $this->config['per_page'] = 20;
         }
 
         // Handle the type parameter
@@ -108,7 +116,7 @@ class Table {
                 if ( ! empty( $this->config['multiselect'] ) && ! is_bool( $this->config['multiselect'] ) ) {
                     $this->exception( 'multiselect parameter must be a boolean' );
                 }
-                else {
+                elseif ( empty( $this->config['multiselect'] ) ) {
                     $this->config['multiselect'] = false;
                 }
             });

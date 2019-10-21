@@ -3,6 +3,3 @@ vendor/
 
 # Npm packages
 node_modules/
-
-# Distribution versions
-assets/dist/
