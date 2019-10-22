@@ -1,0 +1,6 @@
+<select name="{field}"{?disabled} disabled{/disabled}>
+    <option value="" disabled selected>{name}</option>
+    {#options}
+        <option value="{key}"{?active} selected{/active}>{value}</option>
+    {/options}
+</select>

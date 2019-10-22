@@ -8,9 +8,7 @@
             </div>
         {/config.search}
         {?config.filters}
-            <div class="dpt-table-filters" id="dpt-table-filters-{config.id}">
-                <p>Loading filters...</p>
-            </div>
+            <div class="dpt-table-filters" id="dpt-table-filters-{config.id}"></div>
         {/config.filters}
         <div class="dpt-table-data" id="dpt-table-data-{config.id}">
             <table>

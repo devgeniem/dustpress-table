@@ -26,6 +26,12 @@ class Table {
         $this->config = $config;
 
         $this->validate_config();
+
+        if ( ! empty( $this->config['templates'] ) ) {
+            add_action( 'wp_enqueue_scripts', function() use ( $config ) {
+                \wp_localize_script( 'dustpress-table', 'dptPartials', get_template_directory_uri() . '/partials/' );
+            }, 15 );
+        }
     }
 
     /**
@@ -87,8 +93,8 @@ class Table {
         }
 
         // Handle the filters parameter
-        if ( ! empty( $this->config['filters'] ) && ! is_array( $this->config['filters'] ) ) {
-            array_walk( $this->config['filters'], function( $filter ) {
+        if ( ! empty( $this->config['filters'] ) && is_array( $this->config['filters'] ) ) {
+            $this->config['filters'] = array_map( function( $filter ) {
                 // Handle the name
                 if ( ! is_array( $filter ) ) {
                     $this->exception( 'filters must be arrays' );
@@ -98,28 +104,38 @@ class Table {
                     $this->exception( 'filter must have a name' );
                 }
 
+                // Handle the type parameter
+                if ( empty( $filter['type'] ) ) {
+                    $filter['type'] = 'select';
+                }
+                elseif ( ! is_string( $filter['type'] ) ) {
+                    $this->exception( 'type must be a string' );
+                }
+
                 if ( empty( $filter['field'] ) || ! is_string( $filter['field'] ) ) {
                     $this->exception( 'filter must have an assigned field' );
                 }
 
                 // Handle the options
-                if ( empty( $this->config['options'] ) ) {
+                if ( empty( $filter['options'] ) ) {
                     $this->exception( 'filter has no options defined' );
                 }
                 else {
-                    if ( ! ( is_string( $this->config['options'] ) || is_array( $this->config['options'] ) ) ) {
+                    if ( ! ( is_string( $filter['options'] ) || is_array( $filter['options'] ) ) ) {
                         $this->exception( 'options must be a string (a DustPress.js endpoint) or an array' );
                     }
                 }
 
                 // Handle the multiselect parameter
-                if ( ! empty( $this->config['multiselect'] ) && ! is_bool( $this->config['multiselect'] ) ) {
+                if ( ! empty( $filter['multiselect'] ) && ! is_bool( $filter['multiselect'] ) ) {
                     $this->exception( 'multiselect parameter must be a boolean' );
                 }
-                elseif ( empty( $this->config['multiselect'] ) ) {
-                    $this->config['multiselect'] = false;
+                elseif ( empty( $filter['multiselect'] ) ) {
+                    $filter['multiselect'] = false;
                 }
-            });
+
+                return $filter;
+            }, $this->config['filters'] );
         }
     }
 

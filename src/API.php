@@ -14,7 +14,9 @@ namespace Geniem\DustPressTable;
 function get_table( array $config ) : array {
     $table = new Table( $config );
 
-    add_action( 'wp_enqueue_scripts', function() use ( $config ) {
+    add_action( 'wp_enqueue_scripts', function() use ( $table ) {
+        $config = $table->get_config();
+
         \wp_localize_script( 'dustpress-table', 'dptConfig_' . $config['id'], $config );
     }, 15 );
 
