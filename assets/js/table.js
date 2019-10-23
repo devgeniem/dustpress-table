@@ -60,6 +60,7 @@ export default class Table {
         this.templates.pagination    = dust.loadSource( ( window.dptTemplates && window.dptTemplates.pagination ) || require( '../../partials/dpt-pagination.dust' ) );
         this.templates.filterWrapper = dust.loadSource( ( window.dptTemplates && window.dptTemplates.filterWrapper ) || require( '../../partials/dpt-filter-wrapper.dust' ) );
         this.templates.filterSelect  = dust.loadSource( ( window.dptTemplates && window.dptTemplates.filterSelect ) || require( '../../partials/dpt-filter-select.dust' ) );
+        this.templates.filterCheckbox  = dust.loadSource( ( window.dptTemplates && window.dptTemplates.filterCheckbox ) || require( '../../partials/dpt-filter-checkbox.dust' ) );
 
         this.renderFilters();
         this.render();
@@ -195,6 +196,10 @@ export default class Table {
             switch ( filter.type ) {
                 case 'select':
                     template = this.templates.filterSelect;
+                    break;
+                case 'checkbox':
+                    template = this.templates.filterCheckbox;
+                    break;
             }
 
             dust.render( template, this.clone( this.config.filters[ index ] ), ( err, out ) => {

@@ -1,0 +1,9 @@
+<fieldset>
+    <legend>{name}</legend>
+    {#options}
+        <div>
+            <input type="checkbox" id="{field}-{key}" name="{field}" value="{key}"{?active} checked{/active}>
+            <label for="{field}-{key}">{value}</label>
+        </div>
+    {/options}
+</fieldset>
