@@ -1,11 +1,12 @@
 import './pagination';
 import Pagination from './pagination';
+import Select from './select';
 
 const $    = window.jQuery;
 const dust = window.dust;
 
 /**
- *Table instance
+ * Table instance
  *
  * @export
  * @class Table
@@ -31,35 +32,45 @@ export default class Table {
         this.endpoint = this.config.data;
         this.perPage  = this.config.per_page;
 
-        this.config.filters.map( ( filter ) => {
-            if ( typeof filter.options !== 'string' ) {
-                const handledOptions = [];
+        // Initialize a jQuery callback stack
+        const stack = {};
 
-                for ( const [ key, value ] of Object.entries( filter.options ) ) {
-                    handledOptions.push({
-                        key: key,
-                        value: value
-                    });
-                }
+        // Create an object for publish-subscribe actions
+        this.actions = ( action ) => {
+            let callbacks;
 
-                filter.options = handledOptions;
+            if ( ! stack[ action ] ) {
+                callbacks = jQuery.Callbacks();
+
+                stack[ action ] = {
+                    publish: callbacks.fire,
+                    subscribe: callbacks.add,
+                    unsubscribe: callbacks.remove
+                };
             }
-            else {
-                filter.endpoint = filter.options;
-                filter.options  = [];
-            }
 
-            return filter;
+            return stack[ action ];
+        }
+
+        // Initialize the filter objects with a proper type
+        this.filters = this.config.filters.map( ( filter ) => {
+            const initData = JSON.parse( JSON.stringify( filter ) );
+
+            initData.parentTable = this;
+
+            switch ( initData.type ) {
+                case 'select':
+                default:
+                    return new Select( initData );
+            }
         });
 
         this.page = 1;
-        this.filters = {};
 
         // Dust templates
         this.templates.table         = dust.loadSource( ( window.dptTemplates && window.dptTemplates.table ) || require( '../../partials/dpt-table-inner.dust' ) );
         this.templates.pagination    = dust.loadSource( ( window.dptTemplates && window.dptTemplates.pagination ) || require( '../../partials/dpt-pagination.dust' ) );
         this.templates.filterWrapper = dust.loadSource( ( window.dptTemplates && window.dptTemplates.filterWrapper ) || require( '../../partials/dpt-filter-wrapper.dust' ) );
-        this.templates.filterSelect  = dust.loadSource( ( window.dptTemplates && window.dptTemplates.filterSelect ) || require( '../../partials/dpt-filter-select.dust' ) );
 
         this.renderFilters();
         this.render();
@@ -73,12 +84,21 @@ export default class Table {
      * @memberof Table
      */
     async render( args ) {
-        this.getFilterValues();
+        const filterValues = {};
+
+        for ( const index in this.filters ) {
+            const filter = this.filters[ index ];
+            const value  = filter.getValue();
+
+            if ( value ) {
+                filterValues[ filter.field ] = value;
+            }
+        }
 
         const defaults = {
             page: this.page,
             perPage: this.perPage,
-            filters: this.filters,
+            filters: filterValues,
             search: this.search
         };
 
@@ -105,8 +125,8 @@ export default class Table {
                 renderData.columns = handledColumns;
 
                 dust.render( this.templates.table, this.clone( renderData ), ( err, out ) => {
-                    if ( err) {
-                        console.err( err );
+                    if ( err ) {
+                        console.error( err );
                     }
                     else {
                         $( this.dataEl ).html( out );
@@ -125,98 +145,20 @@ export default class Table {
             this.initFilters();
         }
 
-        for ( const index in this.config.filters ) {
-            const filter = this.config.filters[ index ];
+        for ( const index in this.filters ) {
+            const filter = this.filters[ index ];
 
-            if ( typeof filter.endpoint !== 'undefined' ) {
-                const optionArgs = {
-                    tidy: true
-                };
-
-                let disabled = false;
-
-                if ( filter.depends ) {
-                    if ( typeof filter.depends === 'string' ) {
-                        const dependValue = this.filterEl.find( 'select[name="' + filter.depends + '"]').find( 'option:selected' ).val();
-
-                        if ( ! dependValue ) {
-                            disabled = true;
-                        }
-                        else {
-                            optionArgs[ filter.depends ] = dependValue;
-                        }
-                    }
-                    else if ( typeof filter.depends === 'object' ) {
-                        for ( const dIndex in filter.depends ) {
-                            const dependValue = this.filterEl.find( 'select[name="' + filter.depends[ dIndex ] + '"]').find( 'option:selected' ).val();
-
-                            if ( ! dependValue ) {
-                                disabled = true;
-                            }
-                            else {
-                                optionArgs[ filter.depends[ dIndex ] ] = dependValue;
-                            }
-                        }
-                    }
-                }
-
-                if ( disabled ) {
-                    this.config.filters[ index ].disabled = true;
-                }
-                else {
-                    let options = await dp( filter.endpoint, optionArgs );
-
-                    options = options.success[Object.keys( options.success )[0]];
-
-                    const handledOptions = [];
-
-                    for ( const [ key, value ] of Object.entries( options ) ) {
-                        handledOptions.push({
-                            key: key,
-                            value: value
-                        });
-                    }
-
-                    this.config.filters[ index ].disabled = false;
-                    this.config.filters[ index ].options  = handledOptions;
-                }
-            }
-
-            this.config.filters[ index ].options.map( ( option ) => {
-                if ( option.key === this.filters[ filter.field ] ) {
-                    option.active = true;
-                }
-
-                return option;
-            });
-
-            let template;
-
-            switch ( filter.type ) {
-                case 'select':
-                    template = this.templates.filterSelect;
-            }
-
-            dust.render( template, this.clone( this.config.filters[ index ] ), ( err, out ) => {
-                if ( err ) {
-                    console.err( err );
-                }
-                else {
-                    $( this.filterEl ).find( '#dpt-table-filter-' + filter.field ).html( out );
-                }
-            });
+            filter.render();
         }
     }
 
     initFilters() {
         this.initial = true;
 
-        for ( const index in this.config.filters ) {
-            const filter = this.config.filters[ index ];
+        for ( const index in this.filters ) {
+            const filter = this.filters[ index ];
 
-            dust.render( this.templates.filterWrapper, filter, ( err, out ) => {
-                $( this.filterEl ).append( out );
-            });
+            filter.initWrapper();
         }
     }
 
@@ -231,14 +173,12 @@ export default class Table {
             this.render();
         });
 
-        this.filterEl.on( 'change', 'select', () => {
-            this.render();
-        });
-
         this.searchEl.on( 'change', 'input', ( e ) => {
             const searchValue = $( e.target ).val();
 
             if ( searchValue.length > 1 ) {
+                this.search = searchValue;
+
                 this.render();
             }
         });

@@ -31,5 +31,5 @@ class DustPressTable {
 }
 
 $( document ).ready( function() {
-    new DustPressTable();
+    window.DustPressTable = new DustPressTable();
 });
