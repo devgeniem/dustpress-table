@@ -21,7 +21,8 @@ export default class Table {
     constructor( el, plugin ) {
         this.templates = {};
         this.initial   = false;
-        this.plugin    = plugin;
+
+        this.getPlugin = () => plugin;
 
         this.id       = $( el ).data( 'id' );
         this.el       = el;
