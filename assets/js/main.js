@@ -15,6 +15,26 @@ class DustPressTable {
         this.findTables();
 
         this.addHelpers();
+
+        // Initialize a jQuery callback stack
+        const stack = {};
+
+        // Create an object for publish-subscribe actions
+        this.actions = ( action ) => {
+            let callbacks;
+
+            if ( ! stack[ action ]) {
+                callbacks = jQuery.Callbacks();
+
+                stack[ action ] = {
+                    publish: callbacks.fire,
+                    subscribe: callbacks.add,
+                    unsubscribe: callbacks.remove
+                };
+            }
+
+            return stack[ action ];
+        };
     }
 
     /**
