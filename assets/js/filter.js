@@ -103,6 +103,7 @@ export default class Filter {
 
                 this.element = this.getElement();
                 this.bindEvents();
+                this.getParent().actions( 'filterRendered' ).publish( this.element );
             }
         });
     }

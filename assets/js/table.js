@@ -96,9 +96,9 @@ export default class Table {
                 }
             }
 
-            if ( window.dptTemplates.defaults ) {
-                if ( window.dptTemplates.defaults[ key ] ) {
-                    return window.dptTemplates.defaults[ key ];
+            if ( window.dptTemplates.default ) {
+                if ( window.dptTemplates.default[ key ] ) {
+                    return window.dptTemplates.default[ key ];
                 }
             }
         }
