@@ -1,0 +1,5 @@
+<tr{?class} class="{class}"{/class}>
+    {#columns}
+        <td{?class} class="{class}"{/class}>{~lb}.{key}{~rb}</td>
+    {/columns}
+</tr{}>

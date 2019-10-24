@@ -2,24 +2,18 @@
     <thead>
         <tr>
             {#columns}
-                <th data-key="{key}">{value}</th>
+                <th data-key="{key}">{label}</th>
             {/columns}
         </tr>
     </thead>
     <tbody>
         {#data}
             <tr>
-                {#.}
-                    <td>{.}</td>
-                {/.}
+                {>"{tableId}Row" /}
             </tr>
         {/data}
     </tbody>
 </table>
 {#pagination}
-    {^template}
-        {>"dpt-pagination" /}
-    {:else}
-        {>"{template}" /}
-    {/template}
+    {>"pagination" /}
 {/pagination}

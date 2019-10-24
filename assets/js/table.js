@@ -52,6 +52,19 @@ export default class Table {
             return stack[ action ];
         }
 
+        this.page = 1;
+
+        // Default dust templates
+        this.templates.table         = dust.loadSource( this.getTemplate( 'table' ) || require( '../../partials/dpt-table-inner.dust' ) );
+        this.templates.pagination    = dust.loadSource( this.getTemplate( 'pagination' ) || require( '../../partials/dpt-pagination.dust' ) );
+        this.templates.rowTemplate   = dust.loadSource( this.getTemplate( 'rowTemplate' ) || require( '../../partials/dpt-row-template.dust' ) );
+        this.templates.filterSelect  = dust.loadSource( this.getTemplate( 'filterSelect' ) || require( '../../partials/dpt-filter-select.dust' ) );
+        this.templates.filterWrapper = dust.loadSource( this.getTemplate( 'filterWrapper' ) || require( '../../partials/dpt-filter-wrapper.dust' ) );
+
+        for ( const [ key, value ] of Object.entries( this.templates ) ) {
+            this.renameDustTemplate( key, value );
+        }
+
         // Initialize the filter objects with a proper type
         this.filters = this.config.filters.map( ( filter ) => {
             const initData = JSON.parse( JSON.stringify( filter ) );
@@ -65,16 +78,46 @@ export default class Table {
             }
         });
 
-        this.page = 1;
-
-        // Dust templates
-        this.templates.table         = dust.loadSource( ( window.dptTemplates && window.dptTemplates.table ) || require( '../../partials/dpt-table-inner.dust' ) );
-        this.templates.pagination    = dust.loadSource( ( window.dptTemplates && window.dptTemplates.pagination ) || require( '../../partials/dpt-pagination.dust' ) );
-        this.templates.filterWrapper = dust.loadSource( ( window.dptTemplates && window.dptTemplates.filterWrapper ) || require( '../../partials/dpt-filter-wrapper.dust' ) );
-
         this.renderFilters();
         this.render();
         this.bindEvents();
+    }
+
+    /**
+     * Get possible template override
+     *
+     * @param {*} key Template key
+     */
+    getTemplate( key ) {
+        if ( window.dptTemplates ) {
+            if ( window.dptTemplates[ this.id ] ) {
+                if ( window.dptTemplates[ this.id ][ key ] ) {
+                    return window.dptTemplates[ this.id ][ key ];
+                }
+            }
+
+            if ( window.dptTemplates.defaults ) {
+                if ( window.dptTemplates.defaults[ key ] ) {
+                    return window.dptTemplates.defaults[ key ];
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Rename a Dust template in the given dust instance
+     * @param {string} newName New name for the template
+     * @param {function} template The template function
+     */
+    renameDustTemplate( newName, template ) {
+        const templateName = template.templateName;
+
+        dust.cache[ newName ]              = dust.cache[ templateName ];
+        dust.cache[ newName ].templateName = newName;
+
+        delete dust.cache[ templateName ];
     }
 
     /**
@@ -118,10 +161,23 @@ export default class Table {
                 for ( const [ key, value ] of Object.entries( renderData.columns ) ) {
                     handledColumns.push({
                         key: key,
-                        value: value
+                        label: value.label,
+                        class: value.class
                     });
                 }
 
+                if ( ! this.rowLoaded ) {
+                    const rowTemplate = await this.getRowTemplate({
+                        columns: handledColumns,
+                        class: this.rowClass || null
+                    });
+
+                    dust.loadSource( dust.compile( rowTemplate, this.id + 'Row' ) );
+
+                    this.rowLoaded = true;
+                }
+
+                renderData.tableId      = this.id;
                 renderData.columns = handledColumns;
 
                 dust.render( this.templates.table, this.clone( renderData ), ( err, out ) => {
@@ -138,6 +194,18 @@ export default class Table {
         } else {
             console.error( 'No DustPress.js present' );
         }
+    }
+
+    getRowTemplate( data ) {
+        return new Promise( ( resolve, reject ) => {
+            dust.render( this.templates.rowTemplate, data, ( err, out ) => {
+                if ( err ) {
+                    reject( err );
+                }
+
+                resolve( out );
+            });
+        });
     }
 
     async renderFilters() {

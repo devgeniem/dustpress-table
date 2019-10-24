@@ -2,7 +2,8 @@
 import '../styles/main.scss';
 import Table from './table';
 
-const $ = window.jQuery;
+const $    = window.jQuery;
+const dust = window.dust;
 
 class DustPressTable {
 
@@ -12,6 +13,8 @@ class DustPressTable {
      */
     constructor() {
         this.findTables();
+
+        this.addHelpers();
     }
 
     /**
@@ -27,6 +30,14 @@ class DustPressTable {
         tables.each( ( index, table ) => {
             this.tables.push( new Table( table ) );
         });
+    }
+
+    addHelpers() {
+        dust.helpers.get = ( chunk, context, bodies, params ) => {
+            var obj = dust.helpers.tap( params.of, chunk, context );
+            var key = params.key;
+            return chunk.write( obj[ key ]);
+        };
     }
 }
 

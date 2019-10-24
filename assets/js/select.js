@@ -17,7 +17,7 @@ export default class Select extends Filter {
 
         this.multi = args.multi || null;
 
-        this.template = dust.loadSource( ( window.dptTemplates && window.dptTemplates.filterSelect ) || require( '../../partials/dpt-filter-select.dust' ) );
+        this.template = this.getParent().templates.filterSelect;
     }
 
     /**
