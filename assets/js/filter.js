@@ -58,7 +58,7 @@ export default class Filter {
             const depend = this.depends[ dIndex ];
 
             this.getParent().actions( depend ).subscribe( () => {
-                this.setValue();
+                this.resetValue();
                 this.render();
             });
         }
@@ -127,8 +127,6 @@ export default class Filter {
             tidy: true,
             args: {}
         };
-
-        this.options  = [];
         this.disabled = false;
 
         for ( const dIndex in this.depends ) {
@@ -148,7 +146,7 @@ export default class Filter {
             else {
                 const value = filter.getValue();
 
-                if ( ! value ) {
+                if ( ! value || value.length === 0 ) {
                     this.disabled = true;
                     return;
                 }
@@ -161,6 +159,8 @@ export default class Filter {
         let options = await dp( this.endpoint, optionArgs );
 
         options = options.success[Object.keys( options.success )[0]];
+
+        this.options = [];
 
         for ( const [ key, value ] of Object.entries( options ) ) {
             this.options.push({
@@ -186,15 +186,26 @@ export default class Filter {
      *
      * @param {*} value 
      */
-    setValue( value = null ) {
+    setValue( value ) {
         $( this.element ).val( value );
+    }
+
+    /**
+     * Set the filter value
+     */
+    resetValue() {
+        $( this.element ).val( null );
     }
 
     bindEvents() {
         this.element.on( 'change', ( e ) => {
-            this.getParent().actions( this.field ).publish();
+            clearTimeout( this.timeout );
 
-            setTimeout( () => this.getParent().render(), 100 );
+            this.timeout = setTimeout( () => {
+                this.getParent().actions( this.field ).publish();
+
+                setTimeout( () => this.getParent().render(), 100 );
+            }, 500 );
         });
     }
 
