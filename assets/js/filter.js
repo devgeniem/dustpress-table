@@ -105,8 +105,7 @@ export default class Filter {
                 this.bindEvents();
 
                 const event = new CustomEvent( 'filterRendered', {
-                    element: this.element,
-                    filter: this
+                    detail: this.element
                 });
 
                 window.dispatchEvent( event );
