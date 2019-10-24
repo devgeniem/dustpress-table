@@ -18,9 +18,10 @@ export default class Table {
      * @param {*} el Element from which to create to table.
      * @memberof Table
      */
-    constructor( el ) {
+    constructor( el, plugin ) {
         this.templates = {};
         this.initial   = false;
+        this.plugin    = plugin;
 
         this.id       = $( el ).data( 'id' );
         this.el       = el;

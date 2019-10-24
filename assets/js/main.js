@@ -48,7 +48,7 @@ class DustPressTable {
         this.tables = [];
 
         tables.each( ( index, table ) => {
-            this.tables.push( new Table( table ) );
+            this.tables.push( new Table( table, this ) );
         });
     }
 
