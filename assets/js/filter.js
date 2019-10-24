@@ -103,7 +103,13 @@ export default class Filter {
 
                 this.element = this.getElement();
                 this.bindEvents();
-                this.getParent().getPlugin().actions( 'filterRendered' ).publish( this.element );
+
+                const event = new CustomEvent( 'filterRendered', {
+                    element: this.element,
+                    filter: this
+                });
+
+                window.dispatchEvent( event );
             }
         });
     }
