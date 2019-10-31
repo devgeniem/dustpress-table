@@ -59,6 +59,7 @@ export default class Filter {
 
             this.getParent().actions( depend ).subscribe( () => {
                 this.resetValue();
+                this.options = [];
                 this.render();
             });
         }
@@ -109,6 +110,12 @@ export default class Filter {
                 });
 
                 window.dispatchEvent( event );
+
+                if ( this.options.length === 1 ) {
+                    this.setValue( this.options[0].key );
+
+                    this.element.trigger( 'change' );
+                }
             }
         });
     }
@@ -190,17 +197,22 @@ export default class Filter {
     /**
      * Set the filter value
      *
-     * @param {*} value 
+     * @param {*} value The value to set.
      */
     setValue( value ) {
         $( this.element ).val( value );
+
+        console.log( 'set value', this.field, this.getValue() );
+        console.trace();
     }
 
     /**
      * Set the filter value
      */
     resetValue() {
-        $( this.element ).val( null );
+        $( this.element ).prop( 'selectedIndex', 0 );
+
+        console.log( 'reset value', this.field, this.getValue() );
     }
 
     bindEvents() {
@@ -218,7 +230,7 @@ export default class Filter {
     /**
      * A deep clone function
      *
-     * @param {object} data 
+     * @param {object} data
      */
     clone( data ) {
         return JSON.parse( JSON.stringify( data ) );

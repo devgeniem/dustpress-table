@@ -171,16 +171,23 @@ export default class Table {
                 if ( ! this.rowLoaded ) {
                     const rowTemplate = await this.getRowTemplate({
                         columns: handledColumns,
-                        class: this.rowClass || null
+                        class: this.rowClass || null,
+                        tableId: this.id,
+                        selectable: this.selectable,
+                        buttons: this.config.buttons
                     });
+
+                    console.log( rowTemplate, this.config.buttons );
 
                     dust.loadSource( dust.compile( rowTemplate, this.id + 'Row' ) );
 
                     this.rowLoaded = true;
                 }
 
-                renderData.tableId      = this.id;
-                renderData.columns = handledColumns;
+                renderData.tableId    = this.id;
+                renderData.columns    = handledColumns;
+                renderData.buttons    = this.config.buttons;
+                renderData.selectable = this.config.selectable;
 
                 dust.render( this.templates.table, this.clone( renderData ), ( err, out ) => {
                     if ( err ) {

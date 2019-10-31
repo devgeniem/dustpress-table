@@ -92,14 +92,40 @@ class Table {
             $this->exception( 'type parameter must be a string' );
         }
 
+        // Handle the possible buttons
+        if ( ! empty( $this->config['buttons'] ) ) {
+            $this->config['buttons'] = array_map( function( $button ) {
+                if ( ! is_array( $button ) ) {
+                    $this->exception( 'buttons must be arrays' );
+                }
+
+                // Handle the label
+                if ( empty( $button['label'] ) || ! is_string( $button['label'] ) ) {
+                    $this->exception( 'button must have a label' );
+                }
+
+                // Handle the classes
+                if ( ! empty( $button['class'] ) && ! is_string( $button['class'] ) ) {
+                    $this->exception( 'button classes must be a space-separated string' );
+                }
+
+                // Handle the href attribute
+                if ( ! empty( $button['href'] ) && ! is_string( $button['href'] ) ) {
+                    $this->exception( 'button href must be a string' );
+                }
+
+                return $button;
+            }, $this->config['buttons'] );
+        }
+
         // Handle the filters parameter
         if ( ! empty( $this->config['filters'] ) && is_array( $this->config['filters'] ) ) {
             $this->config['filters'] = array_map( function( $filter ) {
-                // Handle the name
                 if ( ! is_array( $filter ) ) {
                     $this->exception( 'filters must be arrays' );
                 }
 
+                // Handle the name
                 if ( empty( $filter['name'] ) || ! is_string( $filter['name'] ) ) {
                     $this->exception( 'filter must have a name' );
                 }

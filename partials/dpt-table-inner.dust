@@ -1,9 +1,15 @@
 <table>
     <thead>
         <tr>
+            {?selectable}
+                <th></th>
+            {/selectable}
             {#columns}
                 <th data-key="{key}">{label}</th>
             {/columns}
+            {#buttons}
+                <th></th>
+            {/buttons}
         </tr>
     </thead>
     <tbody>

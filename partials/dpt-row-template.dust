@@ -1,5 +1,15 @@
-<tr{?class} class="{class}"{/class}>
+<tr{?class} class="{class}"{/class}{~lb}?id{~rb} data-row-id="{~lb}id{~rb}"{~lb}/id{~rb}>
+    {~lb}?selectable{~rb}
+        <td><input type="checkbox" name="dpt-table-{tableId}" value="{~lb}id{~rb}" /></td>
+    {~lb}/selectable{~rb}
     {#columns}
         <td{?class} class="{class}"{/class}>{~lb}.{key}{~rb}</td>
     {/columns}
-</tr{}>
+    {#buttons}
+        {?href}
+            <td><a{?class} class="{class}"{/class}{?href} href="{href}"{/href}>{label}</a></td>
+        {:else}
+            <td><button{?class} class="{class}"{/class}{?href} href="{href}"{/href}>{label}</button></td>
+        {/href}
+    {/buttons}
+</tr>
