@@ -172,10 +172,12 @@ export default class Table {
         const dpArgs = Object.assign( defaults, args );
 
         if ( typeof dp === 'function' ) {
-            dp( this.endpoint, {
-                tidy: true,
-                args: dpArgs
-            }).then( async data => {
+            try {
+                const data = await dp( this.endpoint, {
+                    tidy: true,
+                    args: dpArgs
+                });
+
                 const renderData = data.success[Object.keys( data.success )[0]];
 
                 renderData.pagination = new Pagination( this.page, parseInt( renderData.total / this.perPage ) );
@@ -221,11 +223,11 @@ export default class Table {
                         this.removeLoader();
                     }
                 });
-            }).catch( error => {
+            } catch( error ) {
                 console.error( error );
 
                 this.removeLoader();
-            });
+            }
         } else {
             console.error( 'No DustPress.js present' );
 
