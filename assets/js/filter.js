@@ -201,9 +201,6 @@ export default class Filter {
      */
     setValue( value ) {
         $( this.element ).val( value );
-
-        console.log( 'set value', this.field, this.getValue() );
-        console.trace();
     }
 
     /**
@@ -211,8 +208,6 @@ export default class Filter {
      */
     resetValue() {
         $( this.element ).prop( 'selectedIndex', 0 );
-
-        console.log( 'reset value', this.field, this.getValue() );
     }
 
     bindEvents() {

@@ -86,6 +86,26 @@ export default class Table {
     }
 
     /**
+     * Add loading class to the main element
+     *
+     * @memberof Table
+     */
+    addLoader() {
+        console.log( this.el, 'loader added' );
+        $( this.el ).addClass( 'dpt-table-loading' );
+    }
+
+    /**
+     * Remove loading class from the main element
+     *
+     * @memberof Table
+     */
+    removeLoader() {
+        $( this.el ).removeClass( 'dpt-table-loading' );
+        console.log( this.el, 'loader removed' );
+    }
+
+    /**
      * Get possible template override
      *
      * @param {*} key Template key
@@ -130,6 +150,8 @@ export default class Table {
      */
     async render( args ) {
         const filterValues = {};
+
+        this.addLoader();
 
         for ( const index in this.filters ) {
             const filter = this.filters[ index ];
@@ -177,8 +199,6 @@ export default class Table {
                         buttons: this.config.buttons
                     });
 
-                    console.log( rowTemplate, this.config.buttons );
-
                     dust.loadSource( dust.compile( rowTemplate, this.id + 'Row' ) );
 
                     this.rowLoaded = true;
@@ -192,16 +212,24 @@ export default class Table {
                 dust.render( this.templates.table, this.clone( renderData ), ( err, out ) => {
                     if ( err ) {
                         console.error( err );
+
+                        this.removeLoader();
                     }
                     else {
                         $( this.dataEl ).html( out );
+
+                        this.removeLoader();
                     }
                 });
             }).catch( error => {
                 console.error( error );
+
+                this.removeLoader();
             });
         } else {
             console.error( 'No DustPress.js present' );
+
+            this.removeLoader();
         }
     }
 
