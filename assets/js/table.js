@@ -68,7 +68,8 @@ export default class Table {
         }
 
         // Initialize the filter objects with a proper type
-        if ( this.config.filters.length > 0 ) {
+        if ( this.config.filters !== null ) {
+            console.log( this.config.filters );
             this.filters = this.config.filters.map( ( filter ) => {
                 const initData = JSON.parse( JSON.stringify( filter ) );
 
