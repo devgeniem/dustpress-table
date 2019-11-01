@@ -68,19 +68,25 @@ export default class Table {
         }
 
         // Initialize the filter objects with a proper type
-        this.filters = this.config.filters.map( ( filter ) => {
-            const initData = JSON.parse( JSON.stringify( filter ) );
+        if ( this.config.filters.length > 0 ) {
+            this.filters = this.config.filters.map( ( filter ) => {
+                const initData = JSON.parse( JSON.stringify( filter ) );
 
-            initData.parentTable = this;
+                initData.parentTable = this;
 
-            switch ( initData.type ) {
-                case 'select':
-                default:
-                    return new Select( initData );
-            }
-        });
+                switch ( initData.type ) {
+                    case 'select':
+                    default:
+                        return new Select( initData );
+                }
+            });
 
-        this.renderFilters();
+            this.renderFilters();
+        }
+        else {
+            this.filters = [];
+        }
+
         this.render();
         this.bindEvents();
     }
@@ -153,12 +159,14 @@ export default class Table {
 
         this.addLoader();
 
-        for ( const index in this.filters ) {
-            const filter = this.filters[ index ];
-            const value  = filter.getValue();
+        if ( this.filters.length > 0 ) {
+            for ( const index in this.filters ) {
+                const filter = this.filters[ index ];
+                const value  = filter.getValue();
 
-            if ( value ) {
-                filterValues[ filter.field ] = value;
+                if ( value ) {
+                    filterValues[ filter.field ] = value;
+                }
             }
         }
 
