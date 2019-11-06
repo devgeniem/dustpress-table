@@ -160,6 +160,14 @@ class Table {
                     $filter['multiselect'] = false;
                 }
 
+                // Handle the default to single parameter
+                if ( ! empty( $filter['defaultToSingle'] ) && ! is_bool( $filter['defaultToSingle'] ) ) {
+                    $this->exception( 'defaultToSingle parameter must be a boolean' );
+                }
+                elseif ( empty( $filter['defaultToSingle'] ) ) {
+                    $filter['defaultToSingle'] = false;
+                }
+
                 return $filter;
             }, $this->config['filters'] );
         }

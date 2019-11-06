@@ -25,6 +25,7 @@ export default class Filter {
 
         this.name  = args.name || this.filterError( 'filter name not defined' );
         this.field = args.field || this.filterError( 'filter field name not defined' );
+        this.defaultToSingle = args.defaultToSingle || false;
         this.default = args.default || null;
 
         if ( typeof args.depends === 'string' ) {
@@ -111,7 +112,7 @@ export default class Filter {
 
                 window.dispatchEvent( event );
 
-                if ( this.options.length === 1 ) {
+                if ( this.defaultToSingle && this.options.length === 1 ) {
                     this.setValue( this.options[0].key );
 
                     this.element.trigger( 'change' );

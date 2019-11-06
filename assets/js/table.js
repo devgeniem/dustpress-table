@@ -97,7 +97,6 @@ export default class Table {
      * @memberof Table
      */
     addLoader() {
-        console.log( this.el, 'loader added' );
         $( this.el ).addClass( 'dpt-table-loading' );
     }
 
@@ -108,7 +107,6 @@ export default class Table {
      */
     removeLoader() {
         $( this.el ).removeClass( 'dpt-table-loading' );
-        console.log( this.el, 'loader removed' );
     }
 
     /**
