@@ -208,7 +208,7 @@ export default class Filter {
      * Set the filter value
      */
     resetValue() {
-        $( this.element ).prop( 'selectedIndex', 0 );
+        $( this.element ).prop( 'selectedIndex', -1 );
     }
 
     bindEvents() {
