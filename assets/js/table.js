@@ -288,15 +288,18 @@ export default class Table {
             this.render();
         });
 
-        this.searchEl.on( 'change', 'input', ( e ) => {
-            const searchValue = $( e.target ).val();
+        this.searchEl.on( 'keyup', 'input', ( e ) => this.handleSearchInput( e ) );
+        this.searchEl.on( 'search', 'input', ( e ) => this.handleSearchInput( e ) );
+    }
 
-            if ( searchValue.length > 1 ) {
-                this.search = searchValue;
+    handleSearchInput( e ) {
+        const searchValue = $( e.target ).val();
 
-                this.render();
-            }
-        });
+        if ( searchValue.length > 1 || ! searchValue.length ) {
+            this.search = searchValue;
+
+            this.render();
+        }
     }
 
     getFilterValues() {
