@@ -187,7 +187,8 @@ export default class Table {
 
                 const renderData = data.success[Object.keys( data.success )[0]];
 
-                renderData.pagination = new Pagination( this.page, parseInt( renderData.total / this.perPage ) );
+                renderData.pagination = new Pagination( this.page, Math.ceil( renderData.total / this.perPage ) );
+                console.log( renderData.pagination, renderData.total, this.perPage );
 
                 const handledColumns = [];
 
