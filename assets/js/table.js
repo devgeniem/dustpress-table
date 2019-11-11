@@ -170,13 +170,15 @@ export default class Table {
         }
 
         const defaults = {
-            page: this.page,
+            page: 1,
             perPage: this.perPage,
             filters: filterValues,
             search: this.search
         };
 
         const dpArgs = Object.assign( defaults, args );
+
+        this.page = dpArgs.page;
 
         if ( typeof dp === 'function' ) {
             try {
@@ -282,10 +284,10 @@ export default class Table {
     }
 
     bindEvents() {
-        this.dataEl.on( 'click', 'a.paginate.clickable', ( e ) => {
-            this.page = $( e.target ).data( 'page' );
-
-            this.render();
+        this.dataEl.on( 'click', 'a.paginate', ( e ) => {
+            this.render({
+                page: $( e.target ).data( 'page' )
+            });
         });
 
         this.searchEl.on( 'keyup', 'input', ( e ) => this.handleSearchInput( e ) );
