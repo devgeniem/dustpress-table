@@ -3,7 +3,17 @@
         <td><input type="checkbox" name="dpt-table-{tableId}" value="{~lb}id{~rb}" /></td>
     {~lb}/selectable{~rb}
     {#columns}
-        <td{?class} class="{class}"{/class}>{~lb}.{key}{~rb}</td>
+        {@select key=type}
+            {@eq value="link"}
+                <td{?class} class="{class}"{/class}><a href="{href}">{~lb}.{key}{~rb}</a></td>
+            {/eq}
+            {@eq value="html"}
+                <td{?class} class="{class}"{/class}>{~lb}.{key}|s{~rb}</td>
+            {/eq}
+            {@default}
+                <td{?class} class="{class}"{/class}>{~lb}.{key}{~rb}</td>
+            {/default}
+        {/select}
     {/columns}
     {#buttons}
         {?href}

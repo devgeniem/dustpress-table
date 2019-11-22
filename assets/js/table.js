@@ -198,7 +198,9 @@ export default class Table {
                     handledColumns.push({
                         key: key,
                         label: value.label,
-                        class: value.class
+                        class: value.class,
+                        type: value.type || 'text',
+                        href: value.href || null
                     });
                 }
 
