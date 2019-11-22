@@ -10,9 +10,9 @@
             {@eq value="html"}
                 <td{?class} class="{class}"{/class}>{~lb}.{key}|s{~rb}</td>
             {/eq}
-            {@default}
+            {@eq value="text"}
                 <td{?class} class="{class}"{/class}>{~lb}.{key}{~rb}</td>
-            {/default}
+            {/eq}
         {/select}
     {/columns}
     {#buttons}
