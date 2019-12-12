@@ -233,6 +233,10 @@ export default class Table {
                         $( this.dataEl ).html( out );
 
                         this.removeLoader();
+
+                        const event = new CustomEvent( 'tableResultsRendered' );
+
+                        window.dispatchEvent( event );
                     }
                 });
             } catch( error ) {
