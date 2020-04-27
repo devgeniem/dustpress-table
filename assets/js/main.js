@@ -1,7 +1,6 @@
 // Require main style file here for concatenation.
 import '../styles/main.scss';
 import Table from './table';
-import 'custom-event-polyfill';
 
 const $    = window.jQuery;
 const dust = window.dust;

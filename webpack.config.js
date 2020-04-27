@@ -3,13 +3,16 @@ const webpack = require( 'webpack' );
 const CleanWebpackPlugin = require( 'clean-webpack-plugin' );
 const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
 const TerserPlugin = require( 'terser-webpack-plugin' );
+const PolyfillInjectorPlugin = require( 'webpack-polyfill-injector' );
 
 // Plugin root folder.
 const pluginPath = `${path.resolve( __dirname )}`;
+const pluginName = path.basename( __dirname );
 
 // Plugin paths
 const mainEntry = `${pluginPath}/assets/js/main.js`;
 const output = `${pluginPath}/assets/dist`;
+const pluginPublicPath = `/app/plugins/${pluginName}/assets/dist/`;
 
 // All loaders to use on assets.
 const allModules = {
@@ -120,6 +123,11 @@ const allPlugins = [
     new webpack.ProvidePlugin({
         jQuery: 'jquery',
         lodash: 'lodash'
+    }),
+    new PolyfillInjectorPlugin({
+        polyfills: [
+            'CustomEvent'
+        ]
     })
 ];
 
@@ -150,11 +158,14 @@ module.exports = [
         mode: 'development',
 
         entry: {
-            main: [ mainEntry ]
+            main: `webpack-polyfill-injector?${JSON.stringify({
+                modules: [ mainEntry ]
+            })}!`
         },
 
         output: {
             path: output,
+            publicPath: pluginPublicPath,
             filename: '[name].js'
         },
 
