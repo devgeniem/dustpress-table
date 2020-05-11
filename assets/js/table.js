@@ -29,6 +29,7 @@ export default class Table {
         this.dataEl   = $( el ).find( '.dpt-table-data' );
         this.filterEl = $( el ).find( '.dpt-table-filters' );
         this.searchEl = $( el ).find( '.dpt-table-search' );
+        this.searchTo = null;
         this.config   = window[ 'dptConfig_' + this.id ];
 
         this.endpoint = this.config.data;
@@ -227,11 +228,13 @@ export default class Table {
                         console.error( err );
 
                         this.removeLoader();
+                        this.searchEl.find( 'input' ).removeAttr( 'disabled' ).focus();
                     }
                     else {
                         $( this.dataEl ).html( out );
 
                         this.removeLoader();
+                        this.searchEl.find( 'input' ).removeAttr( 'disabled' ).focus();
 
                         const event = new CustomEvent( 'tableResultsRendered' );
 
@@ -242,12 +245,15 @@ export default class Table {
                 console.error( error );
 
                 this.removeLoader();
+                this.searchEl.find( 'input' ).removeAttr( 'disabled' ).focus();
             }
         } else {
             console.error( 'No DustPress.js present' );
 
             this.removeLoader();
+            this.searchEl.find( 'input' ).removeAttr( 'disabled' ).focus();
         }
+
     }
 
     getRowTemplate( data ) {
@@ -295,7 +301,19 @@ export default class Table {
             });
         });
 
-        this.searchEl.on( 'keyup', 'input', ( e ) => this.handleSearchInput( e ) );
+        this.searchEl.on( 'keyup', 'input', ( e ) => {
+            const searchEvent = e;
+
+            if ( this.searchTo !== null ) {
+                clearTimeout( this.searchTo );
+                this.searchTo = null;
+            }
+
+            this.searchTo = setTimeout( () => {
+                this.handleSearchInput( searchEvent );
+            }, 500 );
+        } );
+
         this.searchEl.on( 'search', 'input', ( e ) => this.handleSearchInput( e ) );
     }
 
@@ -304,6 +322,7 @@ export default class Table {
 
         if ( searchValue.length > 1 || ! searchValue.length ) {
             this.search = searchValue;
+            this.searchEl.find( 'input' ).attr( 'disabled', 'disabled' );
 
             this.render();
         }
