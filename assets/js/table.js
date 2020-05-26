@@ -24,13 +24,14 @@ export default class Table {
 
         this.getPlugin = () => plugin;
 
-        this.id       = $( el ).data( 'id' );
-        this.el       = el;
-        this.dataEl   = $( el ).find( '.dpt-table-data' );
-        this.filterEl = $( el ).find( '.dpt-table-filters' );
-        this.searchEl = $( el ).find( '.dpt-table-search' );
-        this.searchTo = null;
-        this.config   = window[ 'dptConfig_' + this.id ];
+        this.id           = $( el ).data( 'id' );
+        this.el           = el;
+        this.dataEl       = $( el ).find( '.dpt-table-data' );
+        this.filterEl     = $( el ).find( '.dpt-table-filters' );
+        this.searchEl     = $(el).find('.dpt-table-search');
+        this.searchButton = $(el).find('.dpt-table-search-button');
+        this.searchTo     = null;
+        this.config       = window[ 'dptConfig_' + this.id ];
 
         this.endpoint = this.config.data;
         this.perPage  = this.config.per_page;
@@ -301,24 +302,19 @@ export default class Table {
             });
         });
 
-        this.searchEl.on( 'keyup', 'input', ( e ) => {
-            const searchEvent = e;
-
-            if ( this.searchTo !== null ) {
-                clearTimeout( this.searchTo );
-                this.searchTo = null;
+        this.searchEl.on( 'keydown', 'input', ( e ) => {
+            if (e.key === 'Enter') {
+                this.handleSearchInput();
             }
+        });
 
-            this.searchTo = setTimeout( () => {
-                this.handleSearchInput( searchEvent );
-            }, 500 );
-        } );
+        this.searchEl.on('click', '.dpt-table-search-button', (e) => this.handleSearchInput());
 
-        this.searchEl.on( 'search', 'input', ( e ) => this.handleSearchInput( e ) );
+        this.searchEl.on( 'search', 'input', ( e ) => this.handleSearchInput() );
     }
 
-    handleSearchInput( e ) {
-        const searchValue = $( e.target ).val();
+    handleSearchInput() {
+        const searchValue = this.searchEl.find('input').val();
 
         if ( searchValue.length > 1 || ! searchValue.length ) {
             this.search = searchValue;

@@ -5,6 +5,7 @@
         {?config.search}
             <div class="dpt-table-search" id="dpt-table-search-{config.id}">
                 <input type="text" name="search" />
+                <button class="dpt-table-search-button" id="dpt-table-search-button-{config.id}">Search</button>
             </div>
         {/config.search}
         {?config.filters}
