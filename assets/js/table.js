@@ -225,6 +225,8 @@ export default class Table {
                 renderData.selectable    = this.config.selectable;
                 renderData.noResultsText = this.config.noResultsText;
 
+                console.log( 'renderData', renderData );
+
                 dust.render( this.templates.table, this.clone( renderData ), ( err, out ) => {
                     if ( err ) {
                         console.error( err );

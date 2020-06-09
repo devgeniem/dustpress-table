@@ -25,5 +25,5 @@
         {>"pagination" /}
     {/pagination}
 {:else}
-    <p class="dpt-table-no-results">{noResultsFound}</p>
+    <p class="dpt-table-no-results">{noResultsText}</p>
 {/data}
