@@ -171,6 +171,11 @@ class Table {
                 return $filter;
             }, $this->config['filters'] );
         }
+
+        // Handle the no results found text
+        if ( empty( $this->config['noResultsText'] ) ) {
+            $this->config['noResultsText'] = 'No results found.';
+        }
     }
 
     /**

@@ -1,25 +1,29 @@
-<table>
-    <thead>
-        <tr>
-            {?selectable}
-                <th></th>
-            {/selectable}
-            {#columns}
-                <th data-key="{key}">{label}</th>
-            {/columns}
-            {#buttons}
-                <th></th>
-            {/buttons}
-        </tr>
-    </thead>
-    <tbody>
-        {#data}
+{?data}
+    <table>
+        <thead>
             <tr>
-                {>"{tableId}Row" /}
+                {?selectable}
+                    <th></th>
+                {/selectable}
+                {#columns}
+                    <th data-key="{key}">{label}</th>
+                {/columns}
+                {#buttons}
+                    <th></th>
+                {/buttons}
             </tr>
-        {/data}
-    </tbody>
-</table>
-{#pagination}
-    {>"pagination" /}
-{/pagination}
+        </thead>
+        <tbody>
+            {#data}
+                <tr>
+                    {>"{tableId}Row" /}
+                </tr>
+            {/data}
+        </tbody>
+    </table>
+    {#pagination}
+        {>"pagination" /}
+    {/pagination}
+{:else}
+    <p class="dpt-table-no-results">{noResultsFound}</p>
+{/data}

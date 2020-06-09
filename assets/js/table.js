@@ -219,10 +219,11 @@ export default class Table {
                     this.rowLoaded = true;
                 }
 
-                renderData.tableId    = this.id;
-                renderData.columns    = handledColumns;
-                renderData.buttons    = this.config.buttons;
-                renderData.selectable = this.config.selectable;
+                renderData.tableId       = this.id;
+                renderData.columns       = handledColumns;
+                renderData.buttons       = this.config.buttons;
+                renderData.selectable    = this.config.selectable;
+                renderData.noResultsText = this.config.noResultsText;
 
                 dust.render( this.templates.table, this.clone( renderData ), ( err, out ) => {
                     if ( err ) {
