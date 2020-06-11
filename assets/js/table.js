@@ -191,7 +191,6 @@ export default class Table {
                 const renderData = data.success[Object.keys( data.success )[0]];
 
                 renderData.pagination = new Pagination( this.page, Math.ceil( renderData.total / this.perPage ) );
-                console.log( renderData.pagination, renderData.total, this.perPage );
 
                 const handledColumns = [];
 
@@ -224,8 +223,6 @@ export default class Table {
                 renderData.buttons       = this.config.buttons;
                 renderData.selectable    = this.config.selectable;
                 renderData.noResultsText = this.config.noResultsText;
-
-                console.log( 'renderData', renderData );
 
                 dust.render( this.templates.table, this.clone( renderData ), ( err, out ) => {
                     if ( err ) {

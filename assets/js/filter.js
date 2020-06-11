@@ -58,8 +58,9 @@ export default class Filter {
         for ( const dIndex in this.depends ) {
             const depend = this.depends[ dIndex ];
 
-            this.getParent().actions( depend ).subscribe( () => {
+            this.getParent().actions(depend).subscribe(() => {
                 this.resetValue();
+                this.getParent().actions( this.field ).publish();
                 this.options = [];
                 this.render();
             });
