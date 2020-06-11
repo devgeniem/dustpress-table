@@ -33,8 +33,9 @@ export default class Table {
         this.searchTo     = null;
         this.config       = window[ 'dptConfig_' + this.id ];
 
-        this.endpoint = this.config.data;
-        this.perPage  = this.config.per_page;
+        this.endpoint      = this.config.data;
+        this.perPage       = this.config.per_page;
+        this.noResultsText = this.config.no_results;
 
         // Initialize a jQuery callback stack
         const stack = {};

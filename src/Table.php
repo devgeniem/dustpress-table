@@ -173,8 +173,8 @@ class Table {
         }
 
         // Handle the no results found text
-        if ( empty( $this->config['noResultsText'] ) ) {
-            $this->config['noResultsText'] = 'No results found.';
+        if ( empty( $this->config['no_results'] ) ) {
+            $this->config['no_results'] = 'No results found.';
         }
     }
 
