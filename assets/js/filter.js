@@ -38,6 +38,12 @@ export default class Filter {
             this.disabled = false;
         }
 
+        if ( typeof args.uses === 'string' ) {
+            this.uses  = [ args.uses ];
+        } else if ( Array.isArray( args.uses ) ) {
+            this.uses  = args.uses;
+        }
+
         // Handle options
         if ( typeof args.options !== 'string' ) {
             const handledOptions = [];
@@ -52,7 +58,7 @@ export default class Filter {
             this.options = handledOptions;
         } else {
             this.endpoint = args.options;
-            this.options  = [];
+            this.options = [];
         }
 
         for ( const dIndex in this.depends ) {
@@ -60,6 +66,17 @@ export default class Filter {
 
             this.getParent().actions(depend).subscribe(() => {
                 this.resetValue();
+                this.getParent().actions( this.field ).publish();
+                this.options = [];
+                this.render();
+            });
+        }
+
+        for ( const uIndex in this.uses ) {
+            const use = this.uses[ uIndex ];
+
+            this.getParent().actions(use).subscribe(() => {
+                //this.resetValue();
                 this.getParent().actions( this.field ).publish();
                 this.options = [];
                 this.render();
@@ -93,7 +110,7 @@ export default class Filter {
      * A render function
      */
     async render() {
-        if ( this.depends && this.depends.length > 0 ) {
+        if (this.endpoint || (this.depends && this.depends.length > 0) || (this.uses && this.uses.length > 0)) {
             await this.populateRemoteOptions();
         }
 
@@ -144,7 +161,8 @@ export default class Filter {
         };
         this.disabled = false;
 
-        for ( const dIndex in this.depends ) {
+        // Get the values of the filters that this filter depends in
+        for (const dIndex in this.depends) {
             const filter = this.getParent().filters.reduce( ( carry, item ) => {
                 if ( this.depends[ dIndex ] === item.field ) {
                     return item;
@@ -171,11 +189,38 @@ export default class Filter {
             }
         }
 
-        let options = await dp( this.endpoint, optionArgs );
+        // Get the values of the filters that this filter uses
+        for ( const uIndex in this.uses ) {
+            const filter = this.getParent().filters.reduce( ( carry, item ) => {
+                if ( this.uses[ uIndex ] === item.field ) {
+                    return item;
+                }
+                else {
+                    return carry;
+                }
+            });
 
-        options = options.success[Object.keys( options.success )[0]];
+            if ( ! filter ) {
+                return;
+            }
+
+            const value = filter.getValue();
+
+            if ( ! value || value.length === 0 ) {
+                continue;
+            }
+            else {
+                optionArgs.args[ filter.field ] = value;
+            }
+        }
+
+        console.log(this.endpoint, optionArgs)
+
+        let options = await dp(this.endpoint, optionArgs);
 
         this.options = [];
+
+        options = options.success[Object.keys( options.success )[0]];
 
         for ( const [ key, value ] of Object.entries( options ) ) {
             this.options.push({
