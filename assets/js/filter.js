@@ -76,7 +76,7 @@ export default class Filter {
             const use = this.uses[ uIndex ];
 
             this.getParent().actions(use).subscribe(() => {
-                //this.resetValue();
+                this.resetValue();
                 this.getParent().actions( this.field ).publish();
                 this.options = [];
                 this.render();
