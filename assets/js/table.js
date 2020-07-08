@@ -223,7 +223,7 @@ export default class Table {
                 renderData.columns       = handledColumns;
                 renderData.buttons       = this.config.buttons;
                 renderData.selectable    = this.config.selectable;
-                renderData.noResultsText = this.config.noResultsText;
+                renderData.noResultsText = this.noResultsText;
 
                 dust.render( this.templates.table, this.clone( renderData ), ( err, out ) => {
                     if ( err ) {
