@@ -214,8 +214,6 @@ export default class Filter {
             }
         }
 
-        console.log(this.endpoint, optionArgs)
-
         let options = await dp(this.endpoint, optionArgs);
 
         this.options = [];
@@ -275,6 +273,22 @@ export default class Filter {
      * @param {object} data
      */
     clone( data ) {
-        return JSON.parse( JSON.stringify( data ) );
+        const seen = [];
+
+        return JSON.parse(
+            JSON.stringify(
+                data,
+                ( key, val ) => {
+                    if ( val !== null && typeof val == "object" ) {
+                        if ( seen.indexOf( val ) >= 0 ) {
+                            return;
+                        }
+                        seen.push( val );
+                    }
+
+                    return val;
+                }
+            )
+        );
     }
 }
