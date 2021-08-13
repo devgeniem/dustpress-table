@@ -14,9 +14,12 @@
 			</li>
 		{/hellip_start}
 		{#pages}
-			<li {?active}class="current unavailable"{/active}>
-				<a class="paginate{^active} clickable{/active}" href="#" data-page="{page}">{page}</a>
-			</li>
+			{!-- prevent empty pages from making dud links --!}
+			{?page}
+				<li {?active}class="current unavailable"{/active}>
+					<a class="paginate{^active} clickable{/active}" href="#" data-page="{page}">{page}</a>
+				</li>
+			{/page}
 		{/pages}
 		{?hellip_end}
 			<li class="unavailable" aria-disabled="true">
